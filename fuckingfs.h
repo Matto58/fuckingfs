@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <stdio.h>
 #include <stdint.h>
 
 // defined in fuckingfs.c
@@ -46,8 +45,7 @@ struct fuckPartitionHeader {
 	char magicStr2[4];
 	uint32_t versionID;
 	uint32_t placeholder;
-	char label[40];
-	uint64_t firstFilePtr;
+	char label[48];
 };
 struct fuckFileHeader {
 	char magicStr1[4];
@@ -61,11 +59,5 @@ struct fuckFileHeader {
 	int64_t unixMsSinceCreation;
 	int64_t unixMsSinceModification;
 };
-
-struct node { void *data, *next; };
-typedef struct node node_t;
-
-node_t *fuckListFiles(FILE *part);
-void fuckFreeLinkedList(node_t *first);
 
 #endif
