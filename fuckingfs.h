@@ -27,6 +27,9 @@ extern const char FUCK_PARTITION_MAGIC_STR[4];
 extern const char FUCK_FILE_MAGIC_STR[4];
 extern const uint32_t FUCK_VERSION_NUM;
 
+#define NMAX(a,b)((a)<(b)?(b):(a))
+#define NMIN(a,b)((a)>(b)?(b):(a))
+
 // permission flags, can be OR'd together
 enum fuckPerms : uint16_t {
 	PERMS_NONE = 0,
