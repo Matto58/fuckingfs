@@ -1,5 +1,5 @@
 // main.c
-// fuckingfs v1.0.0
+// fuckingfs v1.0.1
 // the main program, also serves as a usage example. this will do more later but right now it just takes the files in the specified folder and creates a .bin file with the folder contents (minus subfolders) in a fuckingfs partition and then lists them
 // under LGPL 3.0-or-later
 // https://kittheconfusedcyborg.neocities.org/projs/fuckingfs/
@@ -9,6 +9,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <pwd.h>
 #include "fuckingfs.h"
 
 int main(int argc, char **argv) {
@@ -20,6 +21,7 @@ int main(int argc, char **argv) {
 	snprintf(binFilePath, 256, "%s.bin", argv[1]);
 
 	// the writing portion
+	// todo: move writing and reading portion into functions in fuckingfsutil.c/.h
 	FILE *f = fopen(binFilePath, "w");
 	struct fuckPartitionHeader p1 = {
 		"abc", // magicStr1
@@ -31,6 +33,7 @@ int main(int argc, char **argv) {
 	};
 	strncpy(p1.magicStr1, FUCK_GENERAL_MAGIC_STR, 4);
 	strncpy(p1.magicStr2, FUCK_PARTITION_MAGIC_STR, 4);
+
 	fwrite(&p1, sizeof(struct fuckPartitionHeader), 1, f);
 
 	DIR *d = opendir(argv[1]);
@@ -55,16 +58,24 @@ int main(int argc, char **argv) {
 			"meow.txt", // filename
 			0, // fileSizeDisplayed
 			0, // sectorNextCount
-			"root", // owner (todo: get the actual file owner)
-			0, // unixMsSinceCreation (todo: write the actual timestamps)
+			"foo", // owner
+			0, // unixMsSinceCreation
 			0, // unixMsSinceModification
 		};
 		strncpy(h.magicStr1, FUCK_GENERAL_MAGIC_STR, 4);
 		strncpy(h.magicStr2, FUCK_FILE_MAGIC_STR, 4);
 		strncpy(h.filename, de->d_name, 12);
+
+		struct passwd *p = getpwuid(s.st_uid); // how sketchy is this actually
+		strncpy(h.owner, p->pw_name, 8);
+
+		h.unixMsSinceCreation = s.st_ctim.tv_nsec/1000;
+		h.unixMsSinceModification = s.st_mtim.tv_nsec/1000;
+
 		h.fileSizeDisplayed = s.st_size;
 		h.sectorNextCount = (s.st_size / 64) * 64;
 		if ((s.st_size - h.sectorNextCount) > 0) h.sectorNextCount++;
+
 		fwrite(&h, sizeof(struct fuckFileHeader), 1, f);
 
 		FILE *currentFile = fopen(fullFilePath, "r");
@@ -76,6 +87,7 @@ int main(int argc, char **argv) {
 			fwrite(buffer, 1, 64, f);
 		}
 		while (readBytes == 64);
+
 		fclose(currentFile);
 	}
 	closedir(d);

@@ -1,5 +1,5 @@
 // fuckingfs.c
-// fuckingfs v1.0.0
+// fuckingfs v1.0.1
 // implementations for functions and fields in fuckingfs.h
 // under LGPL 3.0-or-later
 // https://kittheconfusedcyborg.neocities.org/projs/fuckingfs/
@@ -12,7 +12,7 @@
 const char FUCK_GENERAL_MAGIC_STR[4] = {'F', 'U', 'C', 'K'};
 const char FUCK_PARTITION_MAGIC_STR[4] = {'P', 'a', 'r', 't'};
 const char FUCK_FILE_MAGIC_STR[4] = {'F', 'i', 'l', 'e'};
-const uint32_t FUCK_VERSION_NUM = 0x010000; // 0xXXYYZZ XX=major YY=minor ZZ=patch
+const uint32_t FUCK_VERSION_NUM = 0x010001; // 0xXXYYZZ XX=major YY=minor ZZ=patch
 
 node_t *fuckListFiles(FILE *part) {
 	// todo: move linked list ops into separate functions
