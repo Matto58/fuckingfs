@@ -1,3 +1,10 @@
+// fuckingfsutil.h
+// fuckingfs v1.0.2
+// utility functions for directly working with partitions
+// under LGPL 3.0-or-later
+// https://kittheconfusedcyborg.neocities.org/projs/fuckingfs/
+// https://github.com/Matto58/fuckingfs
+
 #include <stdbool.h>
 #include <stdio.h>
 

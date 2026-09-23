@@ -1,3 +1,10 @@
+// fuckingfsutil.c
+// fuckingfs v1.0.2
+// implementations for functions defined in fuckingfsutil.h
+// under LGPL 3.0-or-later
+// https://kittheconfusedcyborg.neocities.org/projs/fuckingfs/
+// https://github.com/Matto58/fuckingfs
+
 #include "fuckingfs.h"
 #include "fuckingfsutil.h"
 #include <errno.h>
@@ -16,7 +23,7 @@ void ffsuInitPartition(FILE *part, char *label) {
 	};
 	strncpy(p.magicStr1, FUCK_GENERAL_MAGIC_STR, 4);
 	strncpy(p.magicStr2, FUCK_PARTITION_MAGIC_STR, 4);
-	strncpy(p.label, label, strnlen(label, 48));
+	strncpy(p.label, label, strnlen(label, 47)+1);
 	fwrite(&p, sizeof(struct fuckPartitionHeader), 1, part);
 }
 
@@ -43,7 +50,7 @@ bool ffsuAddFile(FILE *part, char *fullPath, char *filename) {
 	};
 	strncpy(f.magicStr1, FUCK_GENERAL_MAGIC_STR, 4);
 	strncpy(f.magicStr2, FUCK_FILE_MAGIC_STR, 4);
-	strncpy(f.filename, filename, strnlen(filename, 12));
+	strncpy(f.filename, filename, strnlen(filename, 11)+1);
 
 	struct passwd *p = getpwuid(s.st_uid); // how sketchy is this actually
 	strncpy(f.owner, p->pw_name, 8);
