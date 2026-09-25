@@ -1,5 +1,5 @@
 // fuckingfs.h
-// fuckingfs v1.0.2
+// fuckingfs v1.0.3
 // it's a fucking file system. it doesn't get any more complex than that
 // first try at writing a somewhat functional file system
 // it is the least practical thing in the world but i lowkey don't give a shit lmao

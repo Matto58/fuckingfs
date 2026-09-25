@@ -1,5 +1,5 @@
 // fuckingfsutil.c
-// fuckingfs v1.0.2
+// fuckingfs v1.0.3
 // implementations for functions defined in fuckingfsutil.h
 // under LGPL 3.0-or-later
 // https://kittheconfusedcyborg.neocities.org/projs/fuckingfs/
@@ -78,12 +78,28 @@ bool ffsuAddFile(FILE *part, char *fullPath, char *filename) {
 	return true;
 }
 
-node_t *ffsuGetFileListing(FILE *part) {
-	// todo: move linked list ops into separate functions
+node_t *ffsuInitLinkedList(void *data) {
 	node_t *list = malloc(sizeof(node_t));
 	list->next = NULL;
-	list->data = NULL;
-	node_t *currNode = list;
+	list->data = data;
+	return list;
+}
+
+void ffsuCopyAppendToLinkedList(node_t *first, void *data, size_t size) {
+	node_t *currNode = first;
+	while (currNode->next != NULL)
+		currNode = currNode->next;
+	if (currNode->data != NULL) {
+		currNode->next = malloc(sizeof(node_t));
+		currNode = currNode->next;
+		currNode->next = NULL;
+	}
+	currNode->data = malloc(size);
+	memcpy(currNode->data, data, size);
+}
+
+node_t *ffsuGetFileListing(FILE *part) {
+	node_t *currNode = ffsuInitLinkedList(NULL);
 	// todo?: maybe the partition header isn't going to be at the start, so seek until we encounter it and only then continue
 	fseek(part, sizeof(struct fuckPartitionHeader), SEEK_SET);
 	const size_t fhSize = sizeof(struct fuckFileHeader);
@@ -91,13 +107,7 @@ node_t *ffsuGetFileListing(FILE *part) {
 	while (fread(&h, fhSize, 1, part)) {
 		if (strncmp(h.magicStr1, FUCK_GENERAL_MAGIC_STR, 4) || strncmp(h.magicStr2, FUCK_FILE_MAGIC_STR, 4))
 			continue;
-		if (currNode->data != NULL) {
-			currNode->next = malloc(sizeof(node_t));
-			currNode = currNode->next;
-			currNode->next = NULL;
-		}
-		currNode->data = malloc(fhSize);
-		memcpy(currNode->data, &h, fhSize);
+		ffsuCopyAppendToLinkedList(currNode, &h, sizeof(struct fuckFileHeader));
 		fseek(part, h.sectorNextCount*64, SEEK_CUR);
 	}
 	return list;

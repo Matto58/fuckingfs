@@ -1,5 +1,5 @@
 // main.c
-// fuckingfs v1.0.2
+// fuckingfs v1.0.3
 // the main program, also serves as a usage example. this will do more later but right now it just takes the files in the specified folder and creates a .bin file with the folder contents (minus subfolders) in a fuckingfs partition and then lists them
 // under LGPL 3.0-or-later
 // https://kittheconfusedcyborg.neocities.org/projs/fuckingfs/
