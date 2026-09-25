@@ -99,7 +99,7 @@ void ffsuCopyAppendToLinkedList(node_t *first, void *data, size_t size) {
 }
 
 node_t *ffsuGetFileListing(FILE *part) {
-	node_t *currNode = ffsuInitLinkedList(NULL);
+	node_t *list = ffsuInitLinkedList(NULL);
 	// todo?: maybe the partition header isn't going to be at the start, so seek until we encounter it and only then continue
 	fseek(part, sizeof(struct fuckPartitionHeader), SEEK_SET);
 	const size_t fhSize = sizeof(struct fuckFileHeader);
@@ -107,7 +107,7 @@ node_t *ffsuGetFileListing(FILE *part) {
 	while (fread(&h, fhSize, 1, part)) {
 		if (strncmp(h.magicStr1, FUCK_GENERAL_MAGIC_STR, 4) || strncmp(h.magicStr2, FUCK_FILE_MAGIC_STR, 4))
 			continue;
-		ffsuCopyAppendToLinkedList(currNode, &h, sizeof(struct fuckFileHeader));
+		ffsuCopyAppendToLinkedList(list, &h, sizeof(struct fuckFileHeader));
 		fseek(part, h.sectorNextCount*64, SEEK_CUR);
 	}
 	return list;
